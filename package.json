@@ -135,13 +135,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile && npm run minify",
-    "compile": "tsc -p ./",
-    "minify": "node scripts/minify.js",
-    "build:module": "node scripts/build-module.js",
-    "build:extension": "node scripts/build-extension.js",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile"
+    
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
@@ -154,5 +148,9 @@
     "@node-ipc/node-ipc": "^11.0.3",
     "node-ipc": "^9.2.1",
     "playwright": "^1.58.1"
+  },
+  "repository": {
+    "type": "github",
+    "url": "https://https://github.com/Pavel-automation/pw-write-and-run"
   }
 }

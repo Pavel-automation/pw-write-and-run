@@ -11,7 +11,7 @@
 - ▶ **Flexible Timeouts** - Configurable timeout settings for different scenarios
 
 
-![PW Write-And-Run Demo](./images/Short_Demo.gif)
+![PW Write-And-Run Demo](https://github.com/Pavel-automation/pw-write-and-run/images/Short_Demo.gif)
 
 ## How to Use
 
