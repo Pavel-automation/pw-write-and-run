@@ -1,0 +1,158 @@
+{
+  "name": "pw-write-and-run",
+  "displayName": "Playwright Write And Run",
+  "description": "Write and run Playwright code on the fly, without restarting the test",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pwConsole.executeInBrowser",
+        "title": "Run Selected"
+      },
+      {
+        "command": "pwConsole.clearLogs",
+        "title": "Clear Logs",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "pwConsole.addRunPoint",
+        "title": "Add Run Point"
+      },
+      {
+        "command": "pwConsole.clearRunPoints",
+        "title": "Clear Run Point(s)"
+      },
+      {
+        "command": "pwConsole.copyLog",
+        "title": "Copy Log Message",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "pwConsole.setTimeout",
+        "title": "Set Timeout",
+        "icon": "$(watch)"
+      },
+      {
+        "command": "pwConsole.toggleRunPointVisibility",
+        "title": "Toggle Run Point Visibility"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "pwConsole.executeInBrowser",
+        "key": "ctrl+enter",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "pwConsole.toggleRunPointVisibility",
+        "key": "ctrl+shift+b",
+        "when": "editorTextFocus"
+      }
+    ],
+    "views": {
+      "pwConsolePanel": [
+        {
+          "id": "pwConsole.responseView",
+          "type": "webview",
+          "name": "RESPONSE",
+          "icon": "$(output)"
+        },
+        {
+          "id": "pwConsole.logView",
+          "name": "Logs",
+          "icon": "$(list-unordered)",
+          "visibility": "collapsed"
+        },
+        {
+          "id": "pwConsole.timeoutView",
+          "type": "webview",
+          "name": "Timeout Settings",
+          "icon": "$(watch)",
+          "visibility": "collapsed"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "pwConsolePanel",
+          "title": "PW Write-And-Run",
+          "icon": "$(radio-tower)"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "pwConsole",
+        "label": "PW Write-And-Run"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "pwConsole.clearLogs",
+          "when": "view == pwConsole.logView",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "pwConsole.executeInBrowser",
+          "group": "navigation@1"
+        },
+        {
+          "submenu": "pwConsole",
+          "group": "navigation@2"
+        }
+      ],
+      "pwConsole": [
+        {
+          "command": "pwConsole.addRunPoint",
+          "group": "1_runpoint"
+        },
+        {
+          "command": "pwConsole.clearRunPoints",
+          "group": "1_runpoint"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "pwConsole.copyLog",
+          "when": "view == pwConsole.logView && viewItem == logItem",
+          "group": "1_copy@1"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile && npm run minify",
+    "compile": "tsc -p ./",
+    "minify": "node scripts/minify.js",
+    "build:module": "node scripts/build-module.js",
+    "build:extension": "node scripts/build-extension.js",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.80.0",
+    "terser": "^5.46.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@node-ipc/node-ipc": "^11.0.3",
+    "node-ipc": "^9.2.1",
+    "playwright": "^1.58.1"
+  }
+}
