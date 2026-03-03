@@ -6,3 +6,5 @@ tsconfig.json
 **/*.map
 **/*.ts
 src/executionContext.ts
+images/**
+**/*.gif
