@@ -57,7 +57,8 @@ class LibrariesChangeDetector {
         (0, utils_1.mylog)('Using base directory for import resolution:', this.testFileDir);
     }
     /**
-     * Captures libraries from the file by extracting import statements from the first 30 lines
+     * Captures libraries from the file by extracting import statements from the first 5 lines
+     * This allows detection and tracking of local library imports that may change during testing
      */
     capture() {
         try {
@@ -83,8 +84,9 @@ class LibrariesChangeDetector {
     }
     /**
      * Captures the current state of libraries from the provided import statements
+     * and compares them against previously captured versions to detect changes.
+     *
      * @param importStatements - Array of import statement strings to track
-     
      */
     captureLibraries(importStatements) {
         this.librariesToRefresh.clear();

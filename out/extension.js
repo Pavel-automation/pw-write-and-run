@@ -266,53 +266,6 @@ function activate(context) {
         (0, runPoint_1.clearRunPointsFromFile)(logPanelProvider);
     });
     context.subscriptions.push(clearRunPointsCommand);
-    // Register continueTestRun command
-    // NOTE: This feature is not yet fully implemented and will be used in the future
-    /*
-    const continueTestRunCommand = vscode.commands.registerCommand(
-      'pwConsole.continueTestRun',
-      async () => {
-        if (!ipcServer) {
-          vscode.window.showErrorMessage('IPC Server not initialized');
-          return;
-        }
-  
-        if (!ipcServer.isClientConnected()) {
-          vscode.window.showWarningMessage('PW Write-And-Run not connected. Run test to the Run Point.');
-          return;
-        }
-  
-        mylog('Sending: Continue Test Run');
-  
-        await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: 'Continuing test run...',
-          },
-          async () => {
-            try {
-              const result = await ipcServer!.sendMessage('continue', 30000);
-              
-              if (result.success) {
-                const cleanedMsg = escapeSpecialCharacters(result.message);
-                logPanelProvider.addLog(`Test run continued: ${result.message}`, 'success', false);
-                vscode.window.showInformationMessage(`Test run continued: ${cleanedMsg}`);
-              } else {
-                const cleanedMsg = escapeSpecialCharacters(result.message);
-                logPanelProvider.addLog(`Failed to continue test run: ${result.message}`, 'error', false);
-                vscode.window.showErrorMessage(`Failed to continue test run: ${cleanedMsg}`);
-              }
-            } catch (error) {
-              const errorMessage = error instanceof Error ? error.message : String(error);
-              logPanelProvider.addLog(`Error: ${errorMessage}`, 'error', false);
-              vscode.window.showErrorMessage(`Error: ${errorMessage}`);
-            }
-          }
-        );
-      }
-    );
-    context.subscriptions.push(continueTestRunCommand);
-    */
     // Show status bar item with PWC indicator
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = 'PWC';

@@ -11,7 +11,7 @@
 - ▶ **Flexible Timeouts** - Configurable timeout settings for different scenarios
 
 
-![PW Write-And-Run Demo](https://github.com/Pavel-automation/pw-write-and-run/images/Short_Demo.gif)
+![PW Write-And-Run Demo](https://raw.githubusercontent.com/Pavel-automation/pw-write-and-run/main/images/Short_Demo.gif)
 
 ## How to Use
 
@@ -62,11 +62,11 @@ For issues, questions, or feature requests, please visit the [GitHub repository]
 
 
 ## Installation
-1. Install required library 
+1. Install library to your project with Playwright test
 ```bash
 npm install -D pw-execution-context
 ```
-1. Open Visual Studio Code
-2. Go to Extensions (Ctrl+Shift+X)
-3. Search for "Playwright Write-And-Run"
-4. Click Install
+2. Open Visual Studio Code
+3. Go to Extensions (Ctrl+Shift+X)
+4. Search for "Playwright Write-And-Run"
+5. Click Install

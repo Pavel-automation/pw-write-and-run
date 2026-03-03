@@ -38,7 +38,7 @@ exports.addRunPointToFile = addRunPointToFile;
 exports.clearRunPointsFromFile = clearRunPointsFromFile;
 const vscode = __importStar(require("vscode"));
 const utils_1 = require("./utils");
-const RUNPOINT_CALL = "(await (await import('pw-execution-context')).runPoint(async s=>(await eval(s))));";
+const RUNPOINT_CALL = "(await (await import('pw-execution-context')).runPoint(async s => (await eval(s))));";
 /**
  * Manages hiding/showing Run Point statements with decorations
  */
@@ -83,6 +83,23 @@ class RunPointDecorationManager {
                 this.applyDecorations(editor);
             }
         }));
+        // Handle clicks on Run Point decorations
+        this.disposables.push(vscode.window.onDidChangeTextEditorSelection(event => {
+            const editor = event.textEditor;
+            const selection = event.selections[0];
+            // Check if cursor is in a Run Point range
+            if (selection.isEmpty) { // Just a cursor, not a selection
+                const position = selection.active;
+                const ranges = this.hiddenRanges.get(editor.document.uri.toString()) || [];
+                for (const range of ranges) {
+                    if (range.contains(position)) {
+                        // Cursor is in a collapsed Run Point - reveal it
+                        this.revealRunPoint(editor, range);
+                        break;
+                    }
+                }
+            }
+        }));
         // Apply decorations to current editor
         if (vscode.window.activeTextEditor) {
             this.updateRangesForDocument(vscode.window.activeTextEditor.document);
@@ -110,8 +127,33 @@ class RunPointDecorationManager {
         editor.setDecorations(this.showDecorationType, ranges);
     }
     toggleRunPointAtPosition(editor, position) {
-        // Run Points are no longer revealed on click or cursor placement
-        // This method is kept for compatibility but does nothing
+        const ranges = this.hiddenRanges.get(editor.document.uri.toString()) || [];
+        // Check if clicked position is in a collapsed range
+        for (const range of ranges) {
+            if (range.contains(position)) {
+                // Found it - temporarily reveal by removing decorations
+                this.revealRunPoint(editor, range);
+                return;
+            }
+        }
+    }
+    revealRunPoint(editor, range) {
+        // Temporarily clear decorations for this specific range
+        const allRanges = this.hiddenRanges.get(editor.document.uri.toString()) || [];
+        const otherRanges = allRanges.filter(r => !r.isEqual(range));
+        editor.setDecorations(this.hideDecorationType, otherRanges);
+        editor.setDecorations(this.showDecorationType, otherRanges);
+        // Re-apply decorations after 1 second if cursor moved out of the Run Point
+        setTimeout(() => {
+            const currentEditor = vscode.window.activeTextEditor;
+            if (currentEditor && currentEditor === editor) {
+                const cursorPosition = currentEditor.selection.active;
+                // Only re-hide if cursor is no longer in this Run Point range
+                if (!range.contains(cursorPosition)) {
+                    this.applyDecorations(editor);
+                }
+            }
+        }, 1000);
     }
     dispose() {
         this.hideDecorationType.dispose();

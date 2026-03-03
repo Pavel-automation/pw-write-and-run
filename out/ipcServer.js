@@ -4,11 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IPCServer = void 0;
-const node_ipc_1 = __importDefault(require("@node-ipc/node-ipc"));
+const node_ipc_1 = __importDefault(require("node-ipc"));
 const commandExecutor_1 = require("./commandExecutor");
 const utils_1 = require("./utils");
 const commandBuilder_1 = require("./commandBuilder");
 class IPCServer {
+    /**
+     * Creates an instance of IPCServer
+     * @param logPanel - The log panel provider for displaying server messages and responses
+     */
     constructor(logPanel) {
         this.clientSocket = null;
         this.pendingCommandResolver = null;
@@ -53,12 +57,11 @@ class IPCServer {
         this.cleanup();
     }
     /**
-     * Initialize IPC events
+     * Initialize IPC events and set up message handling
      */
     initEvents() {
         this.ipc.server.on('message', (data, socket) => {
-            // Check if this is an init message
-            //this.logPanel.addLog(`Received response: ${JSON.stringify(data)}`, 'info', false);
+            // Handle different message types from the client
             (0, utils_1.mylog)('IPC Server received message:', data);
             this.commandExecutor?.finish();
             if (data.type === 'init') {
@@ -66,14 +69,14 @@ class IPCServer {
                 this.commandExecutor = new commandExecutor_1.CommandExecutor(data.pathToTest || '');
                 (0, utils_1.mylog)('After command executor');
                 (0, utils_1.mylog)('Client initialized with test path:', data.pathToTest);
-                this.logPanel.addLog(`PW Write-And-Run initialized with test: ${data.pathToTest}`, 'success', false);
+                this.logPanel.addLog(`Playwright initialized with test: ${data.pathToTest}`, 'success', false);
                 return;
             }
             this.resolveCommand(data);
         });
         this.ipc.server.on('socket.disconnected', () => {
             // Log to both output channel and panel
-            this.logPanel.addLog('PW Write-And-Run disconnected', 'warning', false);
+            this.logPanel.addLog('Playwright disconnected', 'warning', false);
             (0, utils_1.mylog)('Client disconnected from IPC server');
             this.cleanup();
             // Update response panel to show default message
@@ -87,13 +90,13 @@ class IPCServer {
         });
         this.ipc.server.on('connect', (socket) => {
             // Log to both output channel and panel
-            this.logPanel.addLog('PW Write-And-Run connected', 'success', false);
+            this.logPanel.addLog('Playwright connected', 'success', false);
             (0, utils_1.mylog)('Client connected to IPC server');
             this.clientSocket = socket;
             this.isConnected = true;
             // Update response panel to show connected message
             if (this.responsePanel) {
-                this.responsePanel.setDefaultMessage('Select the command(s) in the editor as you usually select the text, then Right Mouse Click -> "Execute in Browser"');
+                this.responsePanel.setDefaultMessage('Select the playwright command(s) in the editor as you usually select the text, then Right Mouse Click -> "Execute in Browser"');
             }
         });
         this.ipc.server.on('error', (err) => {
@@ -135,21 +138,22 @@ class IPCServer {
             this.pendingCommandResolver = null;
         }
     }
+    /**
+     * Send a command to the connected client for execution.
+     *
+     * Attempts to execute the command first as an expression (to capture return values).
+     * If the expression fails with a SyntaxError, automatically retries as a statement
+     * (for variable declarations, assignments, etc. that don't return values).
+     *
+     * @param command - The code command to execute in the Playwright context
+     * @param timeout - The timeout in milliseconds for the command execution
+     * @returns An ActionResponse with the execution result or error message
+     *
+     * @remarks
+     * The command will be wrapped with timeout settings by CommandBuilder.
+     * Returns immediately if no client is connected.
+     */
     async sendCommand(command, timeout) {
-        /*
-        const refreshChangedLibrariesStatment = this.commandExecutor?.getLibrariesToLoad();
-        if(refreshChangedLibrariesStatment && refreshChangedLibrariesStatment.length > 0) {
-          mylog('Adding library refresh statements to command:', refreshChangedLibrariesStatment);
-          const result = await this.sendSingleCommand(refreshChangedLibrariesStatment, 10_000);
-          if(!result.success) {
-            mylog('Failed to refresh libraries, aborting command execution:', result.message);
-            return {
-              message: `Failed to refresh libraries: ${result.message}`,
-              success: false,
-            };
-          }
-        }
-          */
         // First try to execute as expression (to capture return value)
         const expressionCommand = commandBuilder_1.CommandBuilder.buildAsExpression(command, timeout);
         const result = await this.sendSingleCommand(expressionCommand, timeout);

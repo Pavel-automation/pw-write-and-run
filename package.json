@@ -1,8 +1,9 @@
 {
   "name": "pw-write-and-run",
-  "displayName": "Playwright Write And Run",
+  "displayName": "Playwright Write-And-Run",
   "description": "Write and run Playwright code on the fly, without restarting the test",
-  "version": "1.0.0",
+  "version": "1.0.2",
+  "publisher": "Pavel-automation",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -134,20 +135,13 @@
       ]
     }
   },
-  "scripts": {
-    
-  },
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
     "@types/node": "^20.x",
-    "@types/vscode": "^1.80.0",
-    "terser": "^5.46.0",
-    "typescript": "^5.0.0"
+    "@types/vscode": "^1.80.0"
   },
   "dependencies": {
     "@node-ipc/node-ipc": "^11.0.3",
-    "node-ipc": "^9.2.1",
-    "playwright": "^1.58.1"
+    "node-ipc": "^9.2.1"
   },
   "repository": {
     "type": "github",

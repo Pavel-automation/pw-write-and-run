@@ -1,7 +1,8 @@
-node_modules/
-.vscode/
-.git/
-src/
-tsconfig*.json
-*.vsix
-*.map
+.vscode/**
+.vscode-test/**
+src/**
+.gitignore
+tsconfig.json
+**/*.map
+**/*.ts
+src/executionContext.ts
