@@ -1,2 +1,4 @@
 /node_modules
 pw-write-and-run-1.0.0.vsix
+/tests/node_modules
+*.vsix
